@@ -1,0 +1,56 @@
+package control;
+
+import java.sql.Connection;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
+
+import model.RecommendInfo;
+import model.SpecInfo;
+import util.BaseException;
+import util.DBUtil;
+import util.DbException;
+
+public class RecommendInfoZ {
+	public List<RecommendInfo> loadRecommend(String userid)throws BaseException{
+		Connection conn=null;
+		try {
+			int Anum;
+			int Afen;
+			List<SpecInfo> result=new ArrayList<SpecInfo>();
+			conn=(Connection) DBUtil.getConnection();
+			String sql="select  testid,grade from xuetest_info where peopleid=?"
+			java.sql.PreparedStatement pst=conn.prepareStatement(sql);
+			pst.setString(1,userid);
+			java.sql.ResultSet rs=pst.executeQuery();
+			//if(!rs.next()) throw new BusinessException("个人信息不 存在");
+			while(rs.next())
+			{
+				SpecInfo u=new SpecInfo();
+				u.setPeopleid(rs.getString(1));
+				u.setSpecclass(rs.getString(2));
+				u.setSpecgrade(rs.getString(3));
+				u.setSpecdec(rs.getString(4));
+				u.setSpecprove(rs.getString(5));
+				result.add(u);
+			}
+			rs.close();
+			pst.close();
+			return result;
+			
+		} catch (SQLException e) {
+			e.printStackTrace();
+			throw new DbException(e);
+		}
+		finally{
+			if(conn!=null)
+				try {
+					conn.close();
+				} catch (SQLException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+		}
+		
+	}
+}

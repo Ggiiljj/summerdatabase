@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<section name="Workbench">
+	<section name="org.eclipse.ui.texteditor.FindReplaceDialog">
+		<item value="false" key="isRegEx"/>
+		<item value="modify" key="selection"/>
+		<item value="false" key="casesensitive"/>
+		<item value="false" key="incremental"/>
+		<item value="true" key="wrap"/>
+		<item value="false" key="wholeword"/>
+		<list key="findhistory">
+			<item value="modify"/>
+			<item value="enroll_plan"/>
+			<item value="labelSchoolid"/>
+			<item value="labelMajorclass"/>
+			<item value="labelMajorname"/>
+			<item value="labelMajorid"/>
+			<item value="schools"/>
+			<item value="schoolInfo"/>
+			<item value="SchoolInfo"/>
+			<item value="FrmReaderManager_ModifyReader"/>
+			<item value="List"/>
+		</list>
+		<list key="replacehistory">
+			<item value="labelPlannum"/>
+			<item value="labelEnrollyear"/>
+			<item value="labelSchoolid"/>
+			<item value="labelEnrollid"/>
+			<item value="enrolls"/>
+			<item value="majorinfo"/>
+			<item value="majors"/>
+			<item value="MajorInfo"/>
+			<item value=""/>
+			<item value="ZSchoolInfoManager_Modify"/>
+		</list>
+	</section>
+	<section name="org.eclipse.ui.texteditor.FindReplaceDialog_dialogBounds">
+		<item value="356" key="DIALOG_WIDTH"/>
+		<item value="1|Microsoft YaHei UI|9.0|0|WINDOWS|1|-15|0|0|0|400|0|0|0|1|0|0|0|0|Microsoft YaHei UI" key="DIALOG_FONT_NAME"/>
+		<item value="454" key="DIALOG_HEIGHT"/>
+		<item value="1308" key="DIALOG_X_ORIGIN"/>
+		<item value="323" key="DIALOG_Y_ORIGIN"/>
+	</section>
+</section>

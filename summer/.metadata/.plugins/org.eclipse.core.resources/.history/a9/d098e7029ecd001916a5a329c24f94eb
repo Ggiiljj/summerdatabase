@@ -1,0 +1,137 @@
+package control;
+
+import java.sql.Connection;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
+
+import model.RecommendInfo;
+import model.SpecInfo;
+import model.XuantestInfo;
+import util.BaseException;
+import util.DBUtil;
+import util.DbException;
+
+public class RecommendInfoZ {
+	public List<RecommendInfo> loadRecommend(String userid)throws BaseException{
+		Connection conn=null;
+		try {
+			int Anum=0;
+			int Bnum=0;
+			int Cnum=0;
+			int Azhunum=0;
+			int Afen=0;
+			conn=(Connection) DBUtil.getConnection();
+			String sql="select testname,grade from xuetest_info where peopleid=?";
+			java.sql.PreparedStatement pst=conn.prepareStatement(sql);
+			pst.setString(1,userid);
+			java.sql.ResultSet rs=pst.executeQuery();
+			//if(!rs.next()) throw new BusinessException("个人信息不 存在");
+			while(rs.next())
+			{ 
+				String tname=rs.getString(1);
+				int tgrade=rs.getInt(2);
+				if(tname.equals("数学")||tname.equals("语文")||tname.equals("英语"))
+				{
+					if(tgrade>=90) {Anum++;Azhunum++;}
+					else if(tgrade<90&&tgrade>=80) {
+						Bnum++;
+					}
+					else if(tgrade<80&&tgrade>=70)
+					{
+						Cnum++;
+					}
+				}
+				else
+				{
+					Anum++;
+				}
+				
+			}
+			Afen=Azhunum*15+(Anum-Azhunum)*10+Bnum*8+Cnum*4;
+			Anum=Anum;
+			String zongtest=null;
+			rs.close();
+			pst.close();
+			sql="select testname from  xuantest_info where peopleid=?";
+			pst=conn.prepareStatement(sql);
+			pst.setString(1,userid);
+		    rs=pst.executeQuery();
+		    List<String>ke=new ArrayList<>();
+		    while(rs.next())
+		    {
+		    	ke.add(rs.getString(1));
+		    	System.out.print(rs.getString(1));
+		    }
+		    rs.close();
+		    pst.close();
+		    sql="select * from grade_info";
+		    pst=conn.prepareStatement(sql);
+		    rs=pst.executeQuery();
+		    List <RecommendInfo> ss=new ArrayList<>();
+		    while(rs.next())
+		    {
+		    	String xuansubjects=null;
+		    	String schoolid=rs.getString(1);
+		    	String majorid=rs.getString(2);
+		    	int signcondclass=rs.getInt(3);
+		    	int signcond1=rs.getInt(4);
+		    	int signcond2=rs.getInt(5);
+		    	xuansubjects=rs.getString(6);
+		    	int judge=0;
+		    	for(int j=0;j<3;j++)
+		    	{
+			    		if(xuansubjects.contains(ke.get(j).toString()))
+			    		{
+			    			judge+=2;
+			    		}
+		    	}
+		    	if(judge==xuansubjects.length()||xuansubjects.equals("无"))
+		    	{
+		    		if(signcondclass==1)
+		    		{
+		    			if(Anum>signcond1)
+		    			{
+		    				RecommendInfo u=new RecommendInfo();
+				    		u.setMajorid(majorid);
+				    		u.setSchoolid(schoolid);
+				    		u.setPeopleid(userid);
+				    		u.setReason("符合");
+				    		ss.add(u);
+		    			}
+		    		}
+		    		else if(signcondclass==2)
+		    		{
+		    			if(Afen>signcond1)
+		    			{
+		    				RecommendInfo u=new RecommendInfo();
+				    		u.setMajorid(majorid);
+				    		u.setSchoolid(schoolid);
+				    		u.setPeopleid(userid);
+				    		u.setReason("符合");
+				    		ss.add(u);
+		    			}
+		    		}
+		    		
+		    	}
+		    	
+		    }
+		    return ss;
+		    		
+		} catch (SQLException e) {
+			e.printStackTrace();
+			throw new DbException(e);
+		}
+		finally{
+			if(conn!=null)
+				try {
+					conn.close();
+				} catch (SQLException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+		}
+		
+	}
+
+}

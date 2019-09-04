@@ -1,0 +1,50 @@
+package control;
+import java.util.ArrayList;
+import java.util.List;
+
+import com.mysql.jdbc.Connection;
+
+import model.SchoolInfo;
+import util.BaseException;
+import util.DBUtil;
+public class SchoolInfoManagerZ {
+	public List<SchoolInfo> searchReader(String keyword)throws BaseException{
+		List<SchoolInfo> result=new ArrayList<SchoolInfo>();
+		Connection conn=null;
+		try {
+			conn=(Connection) DBUtil.getConnection();
+			String sql="select * from school_info";
+			if(keyword!=null && !"".equals(keyword))
+				sql+=" and (schoolid like ? or schoolname like ?)";
+			sql+=" order by schoolid";
+			java.sql.PreparedStatement pst=conn.prepareStatement(sql);
+			if(keyword!=null && !"".equals(keyword)){
+				pst.setString(1, "%"+keyword+"%");
+				pst.setString(2, "%"+keyword+"%");
+				
+			}
+				
+			java.sql.ResultSet rs=pst.executeQuery();
+			while(rs.next()){
+				SchoolInfo r=new SchoolInfo();
+				r.set(rs.getString(1));
+				
+				result.add(r);
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+			throw new DbException(e);
+		}
+		finally{
+			if(conn!=null)
+				try {
+					conn.close();
+				} catch (SQLException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+		}
+		return result;
+		
+	}
+}

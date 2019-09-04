@@ -1,0 +1,55 @@
+package control;
+
+import java.sql.Connection;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
+
+import model.PeopleInfo;
+import model.SpecInfo;
+import util.BaseException;
+import util.DBUtil;
+import util.DbException;
+
+public class SpecInfoManagerZ {
+
+	public List<SpecInfo> loadSpec(String userid)throws BaseException{
+		Connection conn=null;
+		try {
+			List<SpecInfo> result=new ArrayList<SpecInfo>();
+			conn=(Connection) DBUtil.getConnection();
+			String sql="select * from spec_info where peopleid=?";
+			java.sql.PreparedStatement pst=conn.prepareStatement(sql);
+			pst.setString(1,userid);
+			java.sql.ResultSet rs=pst.executeQuery();
+			//if(!rs.next()) throw new BusinessException("个人信息不 存在");
+			if(rs.next())
+			{
+				SpecInfo u=new SpecInfo();
+				u.setPeopleid(rs.getString(1));
+				u.setSpecclass(rs.getString(2));
+				u.setSpecgrade(rs.getString(3));
+				u.setSpecdec(rs.getString(4));
+				u.setSpecprove(rs.getString(5));
+				rs.close();
+				pst.close();
+				result.add(u);
+			}
+			return result;
+			
+		} catch (SQLException e) {
+			e.printStackTrace();
+			throw new DbException(e);
+		}
+		finally{
+			if(conn!=null)
+				try {
+					conn.close();
+				} catch (SQLException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+		}
+		
+	}
+}

@@ -1,0 +1,27 @@
+package model;
+
+public class RecommendInfo {
+	private String peopleid;
+	private String majorid;
+	private String reason;
+	private String majorname;
+	private String schoolname;
+	public String getPeopleid() {
+		return peopleid;
+	}
+	public void setPeopleid(String peopleid) {
+		this.peopleid = peopleid;
+	}
+	public String getMajorid() {
+		return majorid;
+	}
+	public void setMajorid(String majorid) {
+		this.majorid = majorid;
+	}
+	public String getReason() {
+		return reason;
+	}
+	public void setReason(String reason) {
+		this.reason = reason;
+	}
+}

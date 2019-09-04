@@ -1,0 +1,59 @@
+package control;
+
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
+
+import com.mysql.jdbc.Connection;
+
+import model.EnrollPlan;
+import model.MajorInfo;
+import util.BaseException;
+import util.DBUtil;
+import util.DbException;
+
+public class EnrollPlanManagerZ {
+	public List<EnrollPlan> searchEnrolls(String keyword)throws BaseException{
+		List<EnrollPlan> result=new ArrayList<EnrollPlan>();
+		Connection conn=null;
+		try {
+			conn=(Connection) DBUtil.getConnection();
+			String sql="select enroll_plan.*,school_info.schoolname,major_info.majorname from enroll_plan,school_info,major_info where enroll_plan.enrollid=major_info.majorid and enroll_plan.schoolid=school_info.schoolid";
+			if(keyword!=null && !"".equals(keyword))
+				sql+=" and (major_info.majorname like ? or enroll_plan.enrollid  like ? or schoolinfo.schoolname=? or enroll_plan.xuansubjects)";
+			sql+=" order by enroll_plan.enrollid";
+			java.sql.PreparedStatement pst=conn.prepareStatement(sql);
+			if(keyword!=null && !"".equals(keyword)){
+				pst.setString(1, "%"+keyword+"%");
+				pst.setString(2, "%"+keyword+"%");
+				pst.setString(3, "%"+keyword+"%");
+				pst.setString(4, "%"+keyword+"%");
+			}
+				
+			java.sql.ResultSet rs=pst.executeQuery();
+			while(rs.next()){
+				MajorInfo r=new MajorInfo();
+				r.setMajorid(rs.getString(1));
+				r.setMajorname(rs.getString(2));
+				r.setMajorclass(rs.getString(3));
+				r.setSchoolid(rs.getString(4));
+				r.setSchoolname(rs.getString(5));
+				result.add(r);
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+			throw new DbException(e);
+		}
+		finally{
+			if(conn!=null)
+				try {
+					conn.close();
+				} catch (SQLException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+		}
+		return result;
+		
+	}
+}

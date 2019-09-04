@@ -1,0 +1,59 @@
+package control;
+
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
+
+import com.mysql.jdbc.Connection;
+
+import model.EnrollPlan;
+import model.SignupPlan;
+import util.BaseException;
+import util.DBUtil;
+import util.DbException;
+
+public class SignupPlanManagerZ {
+	public List<SignupPlan> searchSignups(String keyword)throws BaseException{
+		List<SignupPlan> result=new ArrayList<SignupPlan>();
+		Connection conn=null;
+		try {
+			conn=(Connection) DBUtil.getConnection();
+			String sql="select signup_plan.*,school_info.schoolname from signup_plan,school_info where signup_plan.schoolid=school_info.schoolid";
+			if(keyword!=null && !"".equals(keyword))
+				sql+=" and (school_info.schoolname like ? or signup_plan.schoolid like ? )";
+			sql+=" order by signup_plan.schoolid";
+			java.sql.PreparedStatement pst=conn.prepareStatement(sql);
+			if(keyword!=null && !"".equals(keyword)){
+				pst.setString(1, "%"+keyword+"%");
+				pst.setString(2, "%"+keyword+"%");
+			}
+			java.sql.ResultSet rs=pst.executeQuery();
+			while(rs.next()){
+				SignupPlan r=new SignupPlan();
+				r.setSchoolid(rs.getString(1));
+				r.setSigncond1(rs.getInt(2));
+				r.setBegintime(rs.getDate(3));
+				r.setEndtime(rs.getDate(4));
+				r.setSignupway(rs.getString(5));
+				r.setSigncond2(rs.getInt(7));
+				r.setSigncondclass(rs.getInt(8));
+				result.add(r);
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+			throw new DbException(e);
+		}
+		finally{
+			if(conn!=null)
+				try {
+					conn.close();
+				} catch (SQLException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+		}
+		return result;
+		
+	}
+	
+}

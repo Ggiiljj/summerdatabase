@@ -1,0 +1,57 @@
+package control;
+
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
+
+import com.mysql.jdbc.Connection;
+
+import model.MajorInfo;
+import util.BaseException;
+import util.DBUtil;
+import util.DbException;
+
+public class MajorInfoManagerZ {
+	public List<MajorInfo> searchMajor(String keyword)throws BaseException{
+		List<MajorInfo> result=new ArrayList<MajorInfo>();
+		Connection conn=null;
+		try {
+			conn=(Connection) DBUtil.getConnection();
+			String sql="select * from major_info";
+			if(keyword!=null && !"".equals(keyword))
+				sql+=" where (majorid like ? or majorname like ? or schoolname=?)";
+			sql+=" order by majorname";
+			java.sql.PreparedStatement pst=conn.prepareStatement(sql);
+			if(keyword!=null && !"".equals(keyword)){
+				pst.setString(1, "%"+keyword+"%");
+				pst.setString(2, "%"+keyword+"%");
+				pst.setString(2, "%"+keyword+"%");
+			}
+				
+			java.sql.ResultSet rs=pst.executeQuery();
+			while(rs.next()){
+				MajorInfo r=new MajorInfo();
+				r.setSchoolid(rs.getString(1));
+				r.setSchoolname(rs.getString(2));
+				r.setProvince(rs.getString(3));
+				r.setCity(rs.getString(4));
+				r.setSchooldesc(rs.getString(5));
+				result.add(r);
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+			throw new DbException(e);
+		}
+		finally{
+			if(conn!=null)
+				try {
+					conn.close();
+				} catch (SQLException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+		}
+		return result;
+		
+	}
+}
